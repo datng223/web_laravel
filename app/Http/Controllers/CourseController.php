@@ -34,11 +34,11 @@ class CourseController extends Controller
                 return $object->year_created_at;
             })
             ->addColumn('edit', function ($object) {
-                $link = route('courses.edit', $object);
-
-                return "<a class='btn btn-primary' href='$link'>Edit</a>";
+                return route('courses.edit', $object);
             })
-            ->rawColumns(['edit'])
+            ->addColumn('destroy', function ($object) {
+                return route('courses.destroy', $object);
+            })
             ->make(true);
     }
 
@@ -113,10 +113,13 @@ class CourseController extends Controller
     public function destroy(DestroyRequest $request, $course)
     {
 //        $course->delete();
-
-
          Course::destroy($course);
         // Course::where('id', $course->id)->delete();
-        return redirect()->route('courses.index');
+
+        $arr = [];
+        $arr['status'] = true;
+        $arr['message'] = '';
+        return response($arr,200);
+//        return true;
     }
 }
