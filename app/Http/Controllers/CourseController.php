@@ -6,23 +6,40 @@ use App\Http\Requests\Course\DestroyRequest;
 use App\Http\Requests\Course\StoreRequest;
 use App\Http\Requests\Course\UpdateRequest;
 use App\Models\Course;
-use Illuminate\Http\Request;
+//use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class CourseController extends Controller
 {
 
-    public function index(Request $request)
+    public function index()
     {
-        $search = $request->get('q');
-        $data = Course::query()
-            ->where('name', 'like', '%' . $search . '%')
-            ->paginate(2);
-        $data->appends(['q' => $search]);
+//        $search = $request->get('q');
+//        $data = Course::query()
+//            ->where('name', 'like', '%' . $search . '%')
+//            ->paginate(2);
+//        $data->appends(['q' => $search]);
 
-        return view('course.index', [
-            'data' => $data,
-            'search' => $search,
-        ]);
+//        return view('course.index', [
+//            'data' => $data,
+//            'search' => $search,
+//        ]);
+        return view('course.index');
+    }
+
+    public function api()
+    {
+        return DataTables::of(Course::query())
+            ->editColumn('created_at', function ($object) {
+                return $object->year_created_at;
+            })
+            ->addColumn('edit', function ($object) {
+                $link = route('courses.edit', $object);
+
+                return "<a class='btn btn-primary' href='$link'>Edit</a>";
+            })
+            ->rawColumns(['edit'])
+            ->make(true);
     }
 
     /**
