@@ -8,6 +8,7 @@ use App\Http\Requests\Course\UpdateRequest;
 use App\Models\Course;
 //use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Yajra\DataTables\DataTables;
@@ -53,6 +54,16 @@ class CourseController extends Controller
                 return route('courses.destroy', $object);
             })
             ->make(true);
+    }
+
+    public function apiName(Request $request)
+    {
+        return $this->model
+            ->where('name', 'like', '%'.$request->get('q').'%')
+            ->get([
+                'id',
+                'name',
+            ]);
     }
 
 

@@ -9,6 +9,7 @@ Route::resource('courses', CourseController::class)->except([
     'show',
 ]);
 Route::get('courses/api', [CourseController::class, 'api'])->name('courses.api');
+Route::get('courses/api/name', [CourseController::class, 'apiName'])->name('courses.api.name');
 //Route::group(['prefix' => 'courses', 'as' => 'course.'], function() {
 //    Route::get('/', [CourseController::class, 'index'])->name('index');
 //    Route::get('/create', [CourseController::class, 'create'])->name('create');

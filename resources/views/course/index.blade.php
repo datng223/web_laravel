@@ -1,6 +1,7 @@
 @extends('layout.master')
 @push('css')
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.1/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/date-1.1.2/fc-4.1.0/fh-3.2.4/r-2.3.0/rg-1.2.0/sc-2.0.7/sb-1.3.4/sl-1.4.0/datatables.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endpush
 @section('content')
     @if ($errors->any())
@@ -20,6 +21,10 @@
 {{--            <form class="float-right form-group form-inline">--}}
 {{--                <label class="mr-2">Search:</label>  <input class="form-control" type="search" name="q" value="{{ $search }}">--}}
 {{--            </form>--}}
+            <div class="form-group mt-2">
+                <select name="" id="select-name"></select>
+            </div>
+
             <table class="table table-striped table-centered mb-0" id="table-index">
                 <thead>
                     <tr>
@@ -38,10 +43,35 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.12.1/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/date-1.1.2/fc-4.1.0/fh-3.2.4/r-2.3.0/rg-1.2.0/sc-2.0.7/sb-1.3.4/sl-1.4.0/datatables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(function() {
+            $("#select-name").select2({
+                ajax: {
+                    url: "{{ route('courses.api.name') }}",
+                    dataType: 'json',
+                    data: function (params) {
+                        return {
+                            q: params.term,
+                        };
+                    },
+                    processResults: function (data, params) {
+                        return {
+                            results: $.map(data, function (item) {
+                                return {
+                                    text: item.name,
+                                    id: item.id,
+                                }
+                            })
+                        };
+                    }
+                },
+                placeholder: 'Search for a name',
+            });
+
+
             let table = $('#table-index').DataTable({
-                dom: 'Blfrtip',
+                dom: 'Blrtip',
                 select: true,
                 buttons: [
                     {
@@ -90,6 +120,11 @@
                     },
                 ]
             });
+
+            $('#select-name').change( function () {
+                table.column(0).search( this.value ).draw();
+            });
+
             $(document).on('click', '.btn-delete', function(){
                 let form = $(this).parents('form');
                 $.ajax({
@@ -106,8 +141,8 @@
                         function() {
                             console.log("error");
                     },
-                })                
-                
+                })
+
             });
 
         });
