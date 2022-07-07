@@ -7,10 +7,23 @@ use App\Http\Requests\Course\StoreRequest;
 use App\Http\Requests\Course\UpdateRequest;
 use App\Models\Course;
 //use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 use Yajra\DataTables\DataTables;
 
 class CourseController extends Controller
 {
+    private Builder $model;
+    public function __construct()
+    {
+        $this->model = (new Course())->query();
+        $routeName = Route::currentRouteName();
+        $arr = explode('.', $routeName);
+        $arr = array_map('ucfirst', $arr);
+        $title = implode(' - ', $arr);
+        View::share('title', $title);
+    }
 
     public function index()
     {
@@ -29,7 +42,7 @@ class CourseController extends Controller
 
     public function api()
     {
-        return DataTables::of(Course::query())
+        return DataTables::of($this->model)
             ->editColumn('created_at', function ($object) {
                 return $object->year_created_at;
             })
@@ -42,28 +55,19 @@ class CourseController extends Controller
             ->make(true);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function create()
     {
         return view('course.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreCourseRequest  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(StoreRequest $request)
     {
 //        $object = new Course();
 //        $object->fill($request->validated());
 //        $object->save();
-        Course::create($request->validated());
+        $this->model->create($request->validated());
 
         return redirect()->route('courses.index');
     }
@@ -76,50 +80,33 @@ class CourseController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateCourseRequest  $request
-     * @param  \App\Models\Course  $course
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateRequest $request, Course $course)
-    {
-//        Course::where('id', $course->id)->update(
-//            $request->except([
-//                '_token',
-//                '_method',
-//            ])
-//        );
-//        $course->update(
-//            $request->validated([
-//                '_token',
-//                '_method',
-//            ])
-//        );
 
-        $course->fill($request->validated());
-        $course->save();
+    public function update(UpdateRequest $request, $courseId)
+    {
+//        $this->model->where('id', $courseId)->update(
+//            $request->validated();
+//        );
+//        $this->model->update(
+//            $request->validated();
+//        );
+        $object = $this->model->find($courseId);
+        $object->fill($request->validated());
+        $object->save();
 
         return redirect()->route('courses.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Course  $course
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(DestroyRequest $request, $course)
+
+    public function destroy(DestroyRequest $request, $courseId)
     {
-//        $course->delete();
-         Course::destroy($course);
-        // Course::where('id', $course->id)->delete();
+//      $this->model->delete();
+//        $this->model->destroy($courseId);
+        $this->model->where('id', $courseId)->delete();
 
         $arr = [];
         $arr['status'] = true;
         $arr['message'] = '';
-        return response($arr,200);
+        return response($arr, 200);
 //        return true;
     }
 }
