@@ -50,6 +50,20 @@
                     </div>
                 <!-- start page title -->
                 <div class="row">
+                    @if ($errors->any())
+                        <div class="col-12">
+                            <div class="alert alert-danger">
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="row">
                     <div class="col-12">
                         @yield('content')
                     </div>
