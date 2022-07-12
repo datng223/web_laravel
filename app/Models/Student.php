@@ -21,4 +21,9 @@ class Student extends Model
     {
         return $age = date_diff(date_create($this->birthdate), date_create())->y;
     }
+
+    public function getGenderNameAttribute(): string
+    {
+        return ($this->gender === 0) ? 'Male' : 'Female';
+    }
 }

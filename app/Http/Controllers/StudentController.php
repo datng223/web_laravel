@@ -37,6 +37,9 @@ class StudentController extends Controller
     public function api()
     {
         return DataTables::of($this->model)
+            ->editColumn('gender', function ($object) {
+                return $object->gender_name;
+            })
             ->addColumn('age', function ($object) {
                 return $object->age;
             })

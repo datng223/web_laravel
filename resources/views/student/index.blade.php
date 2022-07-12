@@ -4,7 +4,7 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endpush
 @section('content')
-    
+
     <div class="card">
         <div class="card-body">
             <a class="btn btn-success" href="{{ route('students.create') }}">
@@ -22,6 +22,7 @@
                     <tr>
                         <th>#</th>
                         <th>Name</th>
+                        <th>Gender</th>
                         <th>Age</th>
                         <th>Edit</th>
                         <th>Delete</th>
@@ -62,6 +63,7 @@
                 columns: [
                     { data: 'id', name: 'id' },
                     { data: 'name', name: 'name' },
+                    { data: 'gender', name: 'gender' },
                     { data: 'age', name: 'age' },
                     {
                         data: 'edit',
