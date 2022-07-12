@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\StudentStatusEnum;
+use App\Models\Course;
 use App\Models\Student;
 use App\Http\Requests\StoreStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
@@ -51,8 +52,10 @@ class StudentController extends Controller
 
     public function create()
     {
-
-        return view('student.create');
+        $courses = Course::query()->get();
+        return view('student.create', [
+            'courses' => $courses,
+        ]);
     }
 
 
@@ -60,7 +63,7 @@ class StudentController extends Controller
     {
         $this->model->create($request->validated());
 
-        return redirect()->route('students.index');
+        return redirect()->route('students.index')->with('success', 'Đã thêm thành công');
     }
 
     /**
